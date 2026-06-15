@@ -199,3 +199,22 @@ async def metrics():
         content=generate_latest(),
         media_type=CONTENT_TYPE_LATEST,
     )
+
+
+# ---------------------------------------------------------------------------
+# API routers
+# ---------------------------------------------------------------------------
+
+from app.api.routes.auth import router as auth_router  # noqa: E402
+from app.api.routes.companies import router as companies_router  # noqa: E402
+from app.api.routes.reports import router as reports_router  # noqa: E402
+from app.api.routes.watchlist import router as watchlist_router  # noqa: E402
+from app.api.routes.jobs import router as jobs_router  # noqa: E402
+from app.api.routes.valuation import router as valuation_router  # noqa: E402
+
+app.include_router(auth_router, prefix="/auth")
+app.include_router(companies_router)
+app.include_router(reports_router)
+app.include_router(watchlist_router)
+app.include_router(jobs_router)
+app.include_router(valuation_router)
