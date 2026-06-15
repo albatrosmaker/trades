@@ -150,7 +150,6 @@ class ResearchReportRead(BaseModel):
     # Convenience accessors surface top-level keys when present.
     content: Optional[dict[str, Any]] = None
     pdf_path: Optional[str] = None
-    error_message: Optional[str] = None
     created_by_user_id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
