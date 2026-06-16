@@ -38,3 +38,6 @@ Thumbs.db
 
 # Alembic
 backend/alembic/versions/*.pyc
+
+# Claude Code internal
+.claude/
