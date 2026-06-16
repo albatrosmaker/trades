@@ -1,65 +1,33 @@
-'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Search, Shield, BarChart2, FileSearch, Cpu, ArrowRight } from 'lucide-react'
-import { useListReports } from '@/hooks/useAnalysis'
+import { DEMO_REPORT } from '@/lib/demo-data'
 import { RecommendationBadge } from '@/components/ui/RecommendationBadge'
-import { formatDate } from '@/lib/formatters'
 import type { Recommendation } from '@/lib/types'
 
 const FEATURES = [
-  {
-    icon: Shield,
-    title: 'SEC-First Data',
-    desc: 'Primary source is always SEC EDGAR. Every claim cites the exact filing, section, and page.',
-  },
-  {
-    icon: Cpu,
-    title: 'Multi-Agent AI',
-    desc: '5 specialized agents analyze financials, governance, valuation, risk, and investment thesis independently.',
-  },
-  {
-    icon: FileSearch,
-    title: 'Evidence Trail',
-    desc: 'Every metric shows its source, formula, and raw inputs. AI analysis — no AI invention.',
-  },
-  {
-    icon: BarChart2,
-    title: 'PDF Reports',
-    desc: 'Export institutional-quality research reports with full citations and evidence appendix.',
-  },
+  { icon: Shield, title: 'SEC-First Data', desc: 'Primary source is always SEC EDGAR. Every claim cites the exact filing, section, and page.' },
+  { icon: Cpu, title: 'Multi-Agent AI', desc: '5 specialized agents analyze financials, governance, valuation, risk, and investment thesis in parallel.' },
+  { icon: FileSearch, title: 'Evidence Trail', desc: 'Every metric shows its source, formula, and raw inputs. AI analyzes — AI never invents.' },
+  { icon: BarChart2, title: 'PDF Reports', desc: 'Export institutional-quality research reports with full citations and evidence appendix.' },
 ]
 
 export default function Home() {
-  const router = useRouter()
-  const [query, setQuery] = useState('')
-  const { data: reports = [] } = useListReports()
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault()
-    const ticker = query.trim().toUpperCase()
-    if (ticker) router.push(`/company/${ticker}`)
-  }
+  const rec = DEMO_REPORT.investment_committee.analysis.recommendation as Recommendation
 
   return (
     <div className="min-h-screen bg-[#0a0e1a] bg-grid">
-      {/* Nav */}
       <nav className="h-14 border-b border-[#1e2d4a] flex items-center px-8">
         <div className="flex items-center gap-2">
           <Cpu className="w-5 h-5 text-blue-400" />
           <span className="font-semibold text-white tracking-tight">EquityLens</span>
-          <span className="text-[10px] bg-blue-900/50 text-blue-300 border border-blue-700 px-1.5 py-0.5 rounded font-mono">
-            AI
-          </span>
+          <span className="text-[10px] bg-blue-900/50 text-blue-300 border border-blue-700 px-1.5 py-0.5 rounded font-mono">AI</span>
         </div>
-        <div className="ml-auto flex gap-4">
-          <a href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors">
-            Dashboard
-          </a>
+        <div className="ml-auto flex gap-4 items-center">
+          <Link href="/dashboard/" className="text-sm text-gray-400 hover:text-white transition-colors">Dashboard</Link>
+          <span className="text-xs bg-yellow-900/40 text-yellow-400 border border-yellow-800 px-2 py-1 rounded font-mono">Demo Mode</span>
         </div>
       </nav>
 
-      {/* Hero */}
       <section className="max-w-4xl mx-auto px-8 pt-24 pb-16 text-center">
         <div className="inline-flex items-center gap-2 bg-blue-900/30 border border-blue-800/50 rounded-full px-4 py-1.5 text-xs text-blue-300 font-mono mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
@@ -79,26 +47,22 @@ export default function Home() {
           with full evidence trails — built for serious investors.
         </p>
 
-        <form onSubmit={handleSearch} className="flex gap-3 max-w-xl mx-auto">
+        <div className="flex gap-3 max-w-xl mx-auto">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Enter ticker symbol (e.g. AAPL, MSFT, NVDA)"
-              className="w-full bg-[#0f1629] border border-[#1e2d4a] rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/70 font-mono text-sm"
-            />
+            <div className="w-full bg-[#0f1629] border border-[#1e2d4a] rounded-xl pl-12 pr-4 py-4 text-gray-600 font-mono text-sm cursor-not-allowed">
+              Demo: AAPL loaded below
+            </div>
           </div>
-          <button
-            type="submit"
-            className="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2"
+          <Link
+            href="/company/AAPL/"
+            className="px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
           >
-            Analyze <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
+            View Demo <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </section>
 
-      {/* Features */}
       <section className="max-w-4xl mx-auto px-8 pb-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
           {FEATURES.map(f => (
@@ -110,47 +74,39 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Recent Reports */}
-        {reports.length > 0 && (
-          <div>
-            <h2 className="text-lg font-semibold text-white mb-4">Recent Research Reports</h2>
-            <div className="bg-[#0f1629] border border-[#1e2d4a] rounded-xl overflow-hidden">
-              {reports.slice(0, 8).map((report, i) => {
-                const rec = report.investment_committee?.analysis?.recommendation as Recommendation | undefined
-                return (
-                  <a
-                    key={report.id}
-                    href={`/company/${report.ticker}/report/${report.id}`}
-                    className="flex items-center justify-between px-5 py-3.5 hover:bg-[#1e2d4a]/30 transition-colors border-b border-[#1e2d4a]/50 last:border-0"
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="font-mono font-bold text-white w-16">{report.ticker}</span>
-                      {rec && <RecommendationBadge recommendation={rec} size="sm" />}
-                      <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                        report.status === 'completed'
-                          ? 'text-emerald-400 bg-emerald-900/20'
-                          : report.status === 'failed'
-                          ? 'text-red-400 bg-red-900/20'
-                          : 'text-yellow-400 bg-yellow-900/20'
-                      }`}>
-                        {report.status}
-                      </span>
-                    </div>
-                    <span className="text-xs text-gray-500 font-mono">{formatDate(report.created_at)}</span>
-                  </a>
-                )
-              })}
-            </div>
+        <div>
+          <h2 className="text-lg font-semibold text-white mb-4">Demo Research Report</h2>
+          <div className="bg-[#0f1629] border border-[#1e2d4a] rounded-xl overflow-hidden">
+            <Link
+              href="/company/AAPL/report/demo-report/"
+              className="flex items-center justify-between px-5 py-4 hover:bg-[#1e2d4a]/30 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <span className="font-mono font-bold text-white w-16">AAPL</span>
+                <RecommendationBadge recommendation={rec} size="sm" />
+                <span className="text-xs font-mono px-2 py-0.5 rounded text-emerald-400 bg-emerald-900/20">completed</span>
+                <span className="text-xs text-gray-500">Apple Inc. · FY2024 Full Analysis</span>
+              </div>
+              <span className="text-xs text-blue-400">View Report →</span>
+            </Link>
           </div>
-        )}
+        </div>
+
+        <div className="mt-8 bg-yellow-900/10 border border-yellow-900/40 rounded-xl p-5">
+          <p className="text-xs text-yellow-400 font-medium mb-1">Demo Mode</p>
+          <p className="text-xs text-gray-400">
+            This is a static demo showing realistic Apple Inc. FY2024 data from SEC EDGAR.
+            For live analysis of any company, deploy with an Anthropic API key — see the{' '}
+            <a href="https://github.com/albatrosmaker/trades" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">
+              GitHub repo
+            </a>.
+          </p>
+        </div>
       </section>
 
       <footer className="border-t border-[#1e2d4a] py-6 text-center text-xs text-gray-600">
         <p>EquityLens — For informational purposes only. Not investment advice.</p>
-        <p className="mt-1">
-          Data sourced from SEC EDGAR (primary), Financial Modeling Prep, Yahoo Finance.
-          AI analysis only; all metrics calculated from real data.
-        </p>
+        <p className="mt-1">Data sourced from SEC EDGAR (primary), Financial Modeling Prep, Yahoo Finance.</p>
       </footer>
     </div>
   )
